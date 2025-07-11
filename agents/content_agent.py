@@ -11,10 +11,8 @@ from datetime import datetime
 
 # LangChain imports
 from langchain.agents import AgentType, initialize_agent
-from langchain.tools import DuckDuckGoSearchRun
-from langchain.llms import OpenAI
-from langchain.schema import HumanMessage
-from langchain.chat_models import ChatOpenAI
+from langchain_community.tools import DuckDuckGoSearchRun
+from langchain_openai import ChatOpenAI
 
 # Configuration
 from config import config

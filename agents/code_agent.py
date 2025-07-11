@@ -10,9 +10,8 @@ import logging
 import re
 from datetime import datetime
 
-# LangChain imports
-from langchain.chat_models import ChatOpenAI
-from langchain.schema import HumanMessage
+# LangChain imports  
+from langchain_openai import ChatOpenAI
 
 # Configuration
 from config import config
