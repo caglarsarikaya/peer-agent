@@ -50,6 +50,13 @@ CODE_AGENT_ENABLED=True
 MAX_SEARCH_RESULTS=5
 
 # =============================================================================
+# OPTIONAL - Search Engine Configuration
+# =============================================================================
+# SerpAPI key for enhanced search results (leave empty to use DuckDuckGo)
+# Get one from: https://serpapi.com/
+SERPAPI_KEY=
+
+# =============================================================================
 # DEVELOPMENT SETTINGS
 # =============================================================================
 # Logging level (DEBUG, INFO, WARNING, ERROR)
@@ -158,6 +165,19 @@ def main():
     
     print("\n🐳 For Docker deployment:")
     print("   docker-compose up --build")
+    
+    # Check if SerpAPI key is configured
+    try:
+        from config import config
+        if config.SERPAPI_KEY:
+            print("\n🔍 Search Integration:")
+            print("   ✅ SerpAPI detected - premium search enabled")
+        else:
+            print("\n🔍 Search Integration:")
+            print("   📍 Using DuckDuckGo (free) - add SERPAPI_KEY for premium search")
+    except:
+        print("\n🔍 Search Integration:")
+        print("   📍 DuckDuckGo available (SerpAPI optional)")
     
     print("\n✅ Setup complete! Check README.md for full instructions.")
 

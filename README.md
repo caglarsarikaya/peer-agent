@@ -87,6 +87,11 @@ API_DEBUG=True
 CONTENT_AGENT_ENABLED=True
 CODE_AGENT_ENABLED=True
 MAX_SEARCH_RESULTS=5
+
+# Optional - Search Engine Configuration
+# SerpAPI key for enhanced search results (leave empty to use DuckDuckGo)
+# Get one from: https://serpapi.com/
+SERPAPI_KEY=your_serpapi_key_here
 ```
 
 > ⚠️ **Important**: Never commit your `.env` file with real API keys!
@@ -280,6 +285,126 @@ GET /v1/agent/stats
 ### Supported Programming Languages
 Python, JavaScript, TypeScript, Java, C++, C#, C, Go, Rust, PHP, Ruby, Swift, Kotlin, Scala, HTML, CSS, SQL, Bash, PowerShell, R, MATLAB
 
+## 🔍 Web Search Integration
+
+**✅ STATUS: FULLY OPERATIONAL with SerpAPI**
+
+The system features intelligent web search integration that automatically detects when tasks require current information and performs searches accordingly.
+
+### 🎯 How Task Routing & Search Works
+
+#### 1. **Task Analysis Flow**
+```
+User Task → PeerAgent → ContentAgent or CodeAgent
+                ↓
+        ContentAgent analyzes task for search keywords
+                ↓
+    🔍 Search Required? → Web Search + Content Generation
+    📝 No Search? → Direct Content Generation
+```
+
+#### 2. **Search Trigger Keywords**
+The ContentAgent automatically triggers web search when tasks contain these keywords:
+
+**Search Keywords**: `research`, `information`, `current`, `latest`, `news`, `facts`, `data`
+
+```bash
+# ✅ TRIGGERS SEARCH - These will search the web:
+"Research latest developments in AI"
+"Find information about State College weather"  
+"What's the current status of climate change?"
+"Latest news about cryptocurrency"
+"Get facts about renewable energy"
+"Provide data on population growth"
+
+# ❌ NO SEARCH - These generate content directly:
+"Write a creative blog about happiness"
+"Create a story about dragons"
+"Draft an email template"
+"Write a poem about nature"
+```
+
+#### 3. **Search Engine Selection (Automatic)**
+The system intelligently selects the best available search engine:
+
+1. **✅ SerpAPI** (Premium) - **CURRENTLY ACTIVE**
+   - Structured JSON results with rich metadata
+   - High-quality, relevant search results
+   - Requires API key: `SERPAPI_KEY=your_serpapi_key`
+
+2. **🔄 DuckDuckGo** (Fallback)
+   - Free search, no API key required
+   - Plain text results
+   - Automatically used if SerpAPI unavailable
+
+#### 4. **Search Result Integration**
+When search is performed:
+- **Results Found**: Web data is integrated into AI-generated content with citations
+- **No Results**: AI generates content based on training data (with disclaimer)
+- **Sources Added**: Automatic citation section with links
+
+### 🔧 Search Configuration
+
+```env
+# Search API Configuration
+SERPAPI_KEY=your_serpapi_key_here        # Optional but recommended
+MAX_SEARCH_RESULTS=5                     # Number of results to include
+
+# Search Engine Selection (automatic based on available keys)
+SEARCH_ENGINE=serpapi                    # serpapi or duckduckgo
+```
+
+### 📊 Search vs Non-Search Examples
+
+| Task Type | Example | Search Triggered? | Output Includes |
+|-----------|---------|-------------------|-----------------|
+| **Research** | "Research quantum computing trends" | ✅ Yes | Current web data + citations |
+| **Current Info** | "Latest information about Tesla stock" | ✅ Yes | Real-time data + sources |
+| **Creative** | "Write a story about space travel" | ❌ No | AI-generated creative content |
+| **Educational** | "Explain machine learning concepts" | ❌ No | AI knowledge without web search |
+| **News** | "What's the latest news in tech?" | ✅ Yes | Current news articles + links |
+
+### 🔍 Search Response Format
+
+When search is triggered, responses include:
+
+```json
+{
+  "result": {
+    "content": "Generated content with web search data...",
+    "search_performed": true,
+    "search_results_count": 5,
+    "sources": [
+      {
+        "title": "Article Title",
+        "url": "https://example.com",
+        "source": "SerpAPI"
+      }
+    ]
+  }
+}
+```
+
+### 🛠️ Troubleshooting Search Issues
+
+#### Common Issues:
+1. **Search not triggering**: Ensure task contains search keywords
+2. **No results found**: SerpAPI/DuckDuckGo may have rate limits
+3. **JSON parsing errors**: Check SerpAPI key validity
+4. **Fallback to DuckDuckGo**: SerpAPI key missing/invalid
+
+#### Debug Commands:
+```bash
+# Check search tool selection in logs:
+python -m api.main
+# Look for: "Search tool: SerpAPI selected" or "Search tool: DuckDuckGo"
+
+# Test search functionality:
+curl -X POST "http://localhost:8000/v1/agent/execute" \
+     -H "Content-Type: application/json" \
+     -d '{"task": "research current AI trends"}'
+```
+
 ## 📊 Project Structure
 
 ```
@@ -333,6 +458,25 @@ uvicorn api.main:app --port 8001
 # Error: "Module not found"
 # Solution: Ensure virtual environment is activated and dependencies installed
 pip install -r requirements.txt
+```
+
+**5. Search Functionality Issues**
+```bash
+# Error: "SerpAPI module not found"
+# Solution: Install optional search dependencies
+pip install google-search-results
+
+# Warning: "Falling back to DuckDuckGo"
+# This is normal if no SerpAPI key is provided - DuckDuckGo works fine
+
+# Error: "Failed to parse SerpAPI results: Expecting property name..."
+# Solution: This is handled automatically - system falls back to DuckDuckGo parsing
+
+# Issue: "Search not triggering when expected"
+# Solution: Include search keywords: research, information, current, latest, news, facts, data
+
+# Issue: "OpenAI API error with placeholder key"
+# Solution: Replace placeholder OPENAI_API_KEY with actual API key from platform.openai.com
 ```
 
 ### Development Tips
