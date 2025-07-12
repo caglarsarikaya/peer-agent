@@ -41,7 +41,7 @@ async def health_check():
             "content": config.CONTENT_AGENT_ENABLED,
             "code": config.CODE_AGENT_ENABLED,
             "peer": peer_agent is not None,
-            "database": mongo_db.is_connected()
+            "database": await mongo_db.is_connected()
         }
         
         # Verify agents are actually working
@@ -91,7 +91,7 @@ async def get_api_stats():
         "startup_time": startup_time.isoformat(),
         "version": "v1",
         "agents_available": peer_agent is not None,
-        "database_connected": mongo_db.is_connected(),
+        "database_connected": await mongo_db.is_connected(),
         "config": {
             "content_agent_enabled": config.CONTENT_AGENT_ENABLED,
             "code_agent_enabled": config.CODE_AGENT_ENABLED,

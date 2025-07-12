@@ -52,7 +52,7 @@ async def lifespan(app: FastAPI):
         logger.info(f"API Configuration: {config.get_api_config()}")
         
         # Initialize MongoDB connection
-        mongo_connected = mongo_db.connect()
+        mongo_connected = await mongo_db.connect()
         if mongo_connected:
             logger.info("MongoDB connected successfully")
         else:
@@ -75,7 +75,7 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down Peer Agent API...")
     
     # Close MongoDB connection
-    mongo_db.close()
+    await mongo_db.close()
 
 
 # Initialize FastAPI app

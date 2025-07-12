@@ -91,22 +91,24 @@ def mock_openai_error():
 def mock_mongodb_connected():
     """Mock MongoDB connection that is connected."""
     with patch('database.mongo.mongo_db') as mock_db:
-        mock_db.is_connected.return_value = True
-        mock_db.save_interaction.return_value = True
-        mock_db.get_session_history.return_value = []
-        mock_db.get_analytics.return_value = {
+        # Use AsyncMock for async methods
+        mock_db.is_connected = AsyncMock(return_value=True)
+        mock_db.save_interaction = AsyncMock(return_value=True)
+        mock_db.get_session_history = AsyncMock(return_value=[])
+        mock_db.get_analytics = AsyncMock(return_value={
             "total_interactions": 10,
             "successful_interactions": 8,
             "success_rate": 0.8
-        }
+        })
         yield mock_db
 
 @pytest.fixture
 def mock_mongodb_disconnected():
     """Mock MongoDB connection that is disconnected."""
     with patch('database.mongo.mongo_db') as mock_db:
-        mock_db.is_connected.return_value = False
-        mock_db.save_interaction.return_value = False
+        # Use AsyncMock for async methods
+        mock_db.is_connected = AsyncMock(return_value=False)
+        mock_db.save_interaction = AsyncMock(return_value=False)
         yield mock_db
 
 @pytest.fixture

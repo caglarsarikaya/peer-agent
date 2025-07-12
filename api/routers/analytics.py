@@ -18,13 +18,13 @@ router = APIRouter(prefix="/v1", tags=["analytics"])
 async def get_recent_interactions(limit: int = 100):
     """Get recent interactions across all sessions."""
     try:
-        if not mongo_db.is_connected():
+        if not await mongo_db.is_connected():
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail="Database not available"
             )
         
-        interactions = mongo_db.get_recent_interactions(limit)
+        interactions = await mongo_db.get_recent_interactions(limit)
         return interactions
         
     except HTTPException:
@@ -41,13 +41,13 @@ async def get_recent_interactions(limit: int = 100):
 async def get_analytics(days: int = 7):
     """Get analytics data for the specified time period."""
     try:
-        if not mongo_db.is_connected():
+        if not await mongo_db.is_connected():
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail="Database not available"
             )
         
-        analytics = mongo_db.get_analytics(days)
+        analytics = await mongo_db.get_analytics(days)
         return analytics
         
     except HTTPException:

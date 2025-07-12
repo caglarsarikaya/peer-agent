@@ -117,7 +117,7 @@ async def execute_task(request: TaskRequest):
                 "error_details": routing_result["result"] if not routing_result["success"] else None
             }
             
-            saved = mongo_db.save_interaction(interaction_data)
+            saved = await mongo_db.save_interaction(interaction_data)
             if saved:
                 logger.debug(f"[{request_id}] Interaction saved to database")
             else:

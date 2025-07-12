@@ -18,13 +18,13 @@ router = APIRouter(prefix="/v1/sessions", tags=["sessions"])
 async def get_session_history(session_id: str, limit: int = 50):
     """Get interaction history for a specific session."""
     try:
-        if not mongo_db.is_connected():
+        if not await mongo_db.is_connected():
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail="Database not available"
             )
         
-        history = mongo_db.get_session_history(session_id, limit)
+        history = await mongo_db.get_session_history(session_id, limit)
         return history
         
     except HTTPException:
@@ -41,13 +41,13 @@ async def get_session_history(session_id: str, limit: int = 50):
 async def get_session_summary(session_id: str):
     """Get session summary information."""
     try:
-        if not mongo_db.is_connected():
+        if not await mongo_db.is_connected():
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail="Database not available"
             )
         
-        summary = mongo_db.get_session_summary(session_id)
+        summary = await mongo_db.get_session_summary(session_id)
         if summary is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
