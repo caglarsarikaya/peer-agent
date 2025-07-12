@@ -133,8 +133,8 @@ class MongoDB:
             # Create InteractionRecord from the data
             interaction = InteractionRecord(**interaction_data)
             
-            # Insert into database
-            result = await self.interactions_collection.insert_one(interaction.dict())
+            # Insert into database  
+            result = await self.interactions_collection.insert_one(interaction.model_dump())
             
             if result.inserted_id:
                 logger.info(f"Interaction saved with ID: {result.inserted_id}")
